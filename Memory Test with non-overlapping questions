@@ -1,5 +1,3 @@
-# updated code 22:33 06/11/2024
-
 
 from PIL import Image
 import os
@@ -12,8 +10,9 @@ win = visual.Window(size=(800, 600), fullscr=False)
 
 # === Setup Experiment Parameters and Global Variables ===
 base_folder = r"C:\Users\Jemmy\OneDrive - University of Glasgow\Biology"
-print(f"Base folder path set to: {base_folder}")
+# print(f"Base folder path set to: {base_folder}") # Debugging line
 
+# Current experiment settings chose 10 categories of images as default, but its number can be adjusted in the future
 category_folders = [
     "Birds01", "Cars02", "Clothes03", "Fish08", "Flowers04", "Fruit05", 
     "Land Animals00", "Musical Instruments06", "Nuts07", "Writing Material09"
@@ -24,7 +23,7 @@ training_blocks = []
 selected_categories = []
 
 ######## Helper function ########
-
+# Resize image to reduce memory load of laptop
 def resize_image(image_path, output_path, size=(800, 800)):
     """Resize an image to the specified size and save it."""
     with Image.open(image_path) as img:
@@ -40,15 +39,15 @@ def check_for_escape():
 
 def get_user_input():
     user_input = gui.Dlg(title="Experiment Setup")
-    user_input.addField("Enter the number of images to memorize (1-10):", 10)
-    user_input.addField("Enter the number of training blocks (1-10):", 10)
+    user_input.addField("Enter the number of images to memorize (1-10):", 10) # Default is 10 in this project, can be adjusted
+    user_input.addField("Enter the number of training blocks (1-10):", 10) # Default is 10 in this project, can be adjusted
     user_input.show()
     if user_input.OK:
         num_categories = int(user_input.data[0])
         num_blocks = int(user_input.data[1])
-        print(f"User Input - Number of Images: {num_categories}, Number of Blocks: {num_blocks}")  # Debugging user input
+        # print(f"User Input - Number of Images: {num_categories}, Number of Blocks: {num_blocks}")  # Debugging line
 
-            # Additional input validation
+        # Additional input validation
         if not (1 <= num_categories <= 10):
             print("Error: Number of images must be between 1 and 10.")
             core.quit()
@@ -58,22 +57,30 @@ def get_user_input():
 
     return num_categories, num_blocks 
 
+# A function to select the categories folders randomly accordng to the user input of 'num_categories'
 def select_categories(num_categories):
     return random.sample(category_folders, num_categories)
     
 # Function to get images from a category folder
 def get_images_from_category(category_name):
-    category_path = os.path.join(base_folder, category_name)
-    all_images = [os.path.join(category_path, file) for file in os.listdir(category_path) if file.endswith(('.png', '.jpg', '.jpeg'))]
-    print(f"All images in {category_name}: {all_images}")         
-    if not os.path.isdir(category_path):
-        print(f"Error: Category path {category_path} does not exist.")
-        core.quit()
+    # Joing the path of base_folder and category name to create a path to locate the category folder
+    category_path = os.path.join(base_folder, category_name) 
 
-    print(f"Checking path for category '{category_name}': {category_path}")  # Debugging category path
- 
-    resized_images = []  # List to hold paths of resized images
-    
+    # Use the function 'listdir()' of the 'os' module to create a list of file containing in the directory of the category folder
+    # For every file in the list, if the file is an image, we join the category path and the image file name to create a full path for the specific image
+    # Then store the full path to the new list created called 'all_images' and check whether next file is an image until all file inside the list was checked
+
+    all_images = [os.path.join(category_path, file) for file in os.listdir(category_path) if file.endswith(('.png', '.jpg', '.jpeg'))] 
+    # print(f"All images in {category_name}: {all_images}") # Debugging line to print the catetory name and the list of full path of all image in the category folder    
+
+    if not os.path.isdir(category_path):
+        # print(f"Error: Category path {category_path} does not exist.") # Debugging line to check whether the path of the category is indeed a directory
+        core.quit()
+    # Create an empty list to hold the paths of resized images in the future
+    resized_images = []  
+
+    # Run through all the image path of the list called 'all_images' which contains all full path of all images in the chosen category folder
+    # For every image path
     for path in all_images:
         # Create a new path for resized images
         resized_path = os.path.splitext(path)[0] + '_resized.jpg'  # Save as a new file with '_resized' suffix
@@ -663,7 +670,7 @@ def prepare_violation_test_sequence(violation_sequences, selected_categories, vi
 # Main routine
 if __name__ == "__main__":
     win = visual.Window(size=(800, 600), fullscr=False)  # Assuming a window is created here
-    #Day_1(win)  # Run Day 1
+    Day_1(win)  # Run Day 1
 
     selected_categories = load_selected_categories("selected_category_order.txt")
     print(f"Selected Categories: {selected_categories}")
