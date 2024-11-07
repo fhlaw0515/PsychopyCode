@@ -83,6 +83,8 @@ def get_images_from_category(category_name):
     # For every image path
     for path in all_images:
         # Create a new path for resized images
+        # os.path.splitext() can split the path into two parts (the root Cars02 and its extention .jpg), then store these in a tuple (Car02, .jpg)
+        # The assign the tuple to a variable called 'resized_path)
         resized_path = os.path.splitext(path)[0] + '_resized.jpg'  # Save as a new file with '_resized' suffix
         
         # Resize the image and save it
